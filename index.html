@@ -1,85 +1,915 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<meta name="msvalidate.01" content="9582E07873BBCFE3A3D209DD01753885" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>何 - 高级前端工程师</title>
-<meta name="description" content="我是一名拥有 5 年前端开发经验的工程师，精通 React、Vue 及性能优化技术，主导过大型 Web 应用的首屏加载优化项目，将页面加载速度提升了 40%。我擅长用工程化手段解决复杂的前端问题，目前希望在大厂的前端团队深耕架构设计与性能优化方向，打造极致的用户体验。">
-<meta name="keywords" content="高级前端工程师">
-<meta name="author" content="何">
-<!-- Open Graph -->
-<meta property="og:title" content="何 - 高级前端工程师">
-<meta property="og:description" content="我是一名拥有 5 年前端开发经验的工程师，精通 React、Vue 及性能优化技术，主导过大型 Web 应用的首屏加载优化项目，将页面加载速度提升了 40%。我擅长用工程化手段解决复杂的前端问题，目前希望在大厂的前端团队深耕架构设计与性能优化方向，打造极致的用户体验。">
-<meta property="og:type" content="profile">
-<meta property="profile:first_name" content="何n<!-- JSON-LD 结构化数据（AI搜索引擎核心解析目标） -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "何",
-  "jobTitle": "高级前端工程师",
-  "description": "我是一名拥有 5 年前端开发经验的工程师，精通 React、Vue 及性能优化技术，主导过大型 Web 应用的首屏加载优化项目，将页面加载速度提升了 40%。我擅长用工程化手段解决复杂的前端问题，目前希望在大厂的前端团队深耕架构设计与性能优化方向，打造极致的用户体验。 所在城市：湘潭 求职状态：对新的机会持开放态度",
-  "url": "",
-  "sameAs": [],
-  "knowsAbout": [],
-  "worksFor": {
-    "@type": "Organization",
-    "name": ""
-  },
-  "alumniOf": {
-    "@type": "CollegeOrUniversity",
-    "name": ""
-  },
-  "keywords": ""
+<title>GEO个人页面生成器</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      }
+    }
+  }
 }
 </script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;
-    background:#fafaf9;color:#1c1917;line-height:1.7;max-width:780px;margin:0 auto;padding:48px 24px}
-  h1{font-size:28px;font-weight:800;margin-bottom:4px}
-  .subtitle{font-size:18px;color:#78716c;margin-bottom:24px}
-  .section{margin-bottom:28px}
-  .section h2{font-size:16px;font-weight:700;border-bottom:2px solid #e7e5e4;padding-bottom:6px;margin-bottom:12px}
-  .bio{font-size:15px;color:#44403c;line-height:1.8}
-  .skill-tags{display:flex;flex-wrap:wrap;gap:8px}
-  .skill-tag{background:#f5f5f4;border:1px solid #d6d3d1;border-radius:6px;padding:4px 12px;font-size:13px}
-  .exp-item,.proj-item,.edu-item{margin-bottom:10px;font-size:14px}
-  .exp-time,.exp-company,.exp-role{font-weight:600;margin-right:12px}
-  .exp-desc,.proj-desc{color:#57534e}
-  .proj-name{font-weight:600;margin-right:12px}
-  .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
-  .links a{color:#b45309;text-decoration:none;font-weight:500}
-  .links a:hover{text-decoration:underline}
-  .geo-hint{margin-top:40px;padding:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12px;color:#92400e}
+  body { background: #fafaf9; }
+  /* 步骤指示器 */
+  .step-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+    background: #e7e5e4; color: #78716c;
+    transition: all 0.3s ease;
+  }
+  .step-dot.active { background: #064e3b; color: #fff; box-shadow: 0 0 0 4px rgba(6,78,59,0.15); }
+  .step-dot.done { background: #10b981; color: #fff; }
+  .step-line {
+    flex: 1; height: 2px; background: #e7e5e4; transition: background 0.3s ease;
+  }
+  .step-line.done { background: #10b981; }
+
+  /* 表单元素 */
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1px solid #d6d3d1;
+    border-radius: 8px; font-size: 14px; background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+    font-family: 'Inter', sans-serif; color: #1c1917;
+  }
+  .form-input:focus {
+    border-color: #064e3b;
+    box-shadow: 0 0 0 3px rgba(6,78,59,0.1);
+  }
+  .form-input::placeholder { color: #a8a29e; }
+  textarea.form-input { resize: vertical; min-height: 80px; line-height: 1.6; }
+  select.form-input { cursor: pointer; appearance: auto; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: #1c1917; margin-bottom: 6px; letter-spacing: 0.02em;
+  }
+  .form-hint { font-size: 12px; color: #a8a29e; margin-top: 4px; line-height: 1.5; }
+
+  /* 标签输入 */
+  .tag-container {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px 12px; border: 1px solid #d6d3d1;
+    border-radius: 8px; background: #fff; min-height: 44px;
+    cursor: text; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tag-container:focus-within {
+    border-color: #064e3b; box-shadow: 0 0 0 3px rgba(6,78,59,0.1);
+  }
+  .tag-container input {
+    border: none; outline: none; flex: 1; min-width: 80px;
+    font-size: 14px; font-family: 'Inter', sans-serif; color: #1c1917;
+    background: transparent; padding: 2px 0;
+  }
+  .tag-container input::placeholder { color: #a8a29e; }
+  .tag-item {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #ecfdf5; border: 1px solid #a7f3d0; color: #064e3b;
+    padding: 3px 10px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  }
+  .tag-remove {
+    cursor: pointer; font-size: 15px; line-height: 1;
+    opacity: 0.6; transition: opacity 0.15s;
+  }
+  .tag-remove:hover { opacity: 1; }
+
+  /* 复选框 */
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border: 1px solid #e7e5e4;
+    border-radius: 8px; cursor: pointer; transition: all 0.15s;
+    font-size: 14px; color: #57534e; user-select: none;
+  }
+  .check-item:hover { border-color: #d6d3d1; background: #f5f5f4; }
+  .check-item.checked { border-color: #10b981; background: #ecfdf5; color: #064e3b; }
+  .check-item input[type=checkbox] { accent-color: #10b981; width: 16px; height: 16px; cursor: pointer; }
+
+  /* 结果Tab */
+  .result-tab {
+    padding: 8px 18px; font-size: 13px; font-weight: 600;
+    color: #78716c; border: 1px solid #e7e5e4; background: #fff;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .result-tab:first-child { border-radius: 8px 0 0 8px; }
+  .result-tab:last-child { border-radius: 0 8px 8px 0; }
+  .result-tab.active { background: #064e3b; color: #fff; border-color: #064e3b; }
+  .result-tab:not(.active):hover { background: #f5f5f4; }
+
+  /* 代码块 */
+  .code-block {
+    background: #1e293b; color: #e2e8f0; padding: 20px;
+    border-radius: 8px; font-family: 'Courier New', monospace;
+    font-size: 12px; line-height: 1.6; overflow-x: auto;
+    white-space: pre-wrap; word-break: break-all;
+    max-height: 500px; overflow-y: auto;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+    padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    opacity: 0; transition: all 0.3s ease; z-index: 9999; pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.info { background: #1e293b; color: #fff; }
+  .toast.success { background: #064e3b; color: #fff; }
+  .toast.error { background: #991b1b; color: #fff; }
+
+  /* 步骤面板动画 */
+  .step-panel { display: none; animation: fadeIn 0.3s ease; }
+  .step-panel.visible { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 按钮基础样式 */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; background: #064e3b; color: #fff;
+    border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .btn-primary:hover { background: #065f46; box-shadow: 0 4px 12px rgba(6,78,59,0.25); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; background: #fff; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 8px; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .btn-secondary:hover { background: #f5f5f4; border-color: #a8a29e; }
 </style>
 </head>
-<body>
-<h1>何</h1>
-<div class="subtitle">高级前端工程师 · 湘潭</div>
-<div class="section">
-  <h2>关于我</h2>
-  <div class="bio">我是一名拥有 5 年前端开发经验的工程师，精通 React、Vue 及性能优化技术，主导过大型 Web 应用的首屏加载优化项目，将页面加载速度提升了 40%。我擅长用工程化手段解决复杂的前端问题，目前希望在大厂的前端团队深耕架构设计与性能优化方向，打造极致的用户体验。</div>
-  <div class="bio" style="margin-top:8px;color:#b45309;font-weight:600">对新的机会持开放态度</div>
-</div>
-<div class="section">
-  <h2>工作经历</h2>
-<div class="exp-item"><span class="exp-time">2022 - 至今</span><span class="exp-company">某互联网公司</span><span class="exp-role">高级前端工程师</span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">负责公司核心 C 端 Web 项目的架构升级与性能优化，主导构建了基于 React+TypeScript 的组件库，覆盖 80% 以上业务场景，将开发效率提升 35%</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">针对首屏加载、打包体积等核心问题实施优化方案，将核心页面首屏加载速度提升 45%，LCP 指标从 3.8s 优化至 1.2s，用户留存率提升 12%</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">推动前端工程化体系建设，搭建自动化 CI/CD 流程与代码规范检查工具，将线上生产环境 Bug 率降低 40%，减少了 80% 的重复运维工作</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">2019-2022</span><span class="exp-company">某科技公司</span><span class="exp-role">前端开发工程师</span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">参与公司小程序与 H5 产品的全流程开发，独立负责用户端、管理后台等多个模块的需求对接与开发交付</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">负责微信小程序框架适配与兼容问题解决，优化了多端渲染逻辑，使页面在不同机型的适配成功率提升至 99%</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div><div class="exp-item"><span class="exp-time">协助团队搭建了基础的前端监控系统，实现了错误日志、性能数据的实时上报，为后续性能优化提供了数据支撑</span><span class="exp-company"></span><span class="exp-role"></span><span class="exp-desc"></span></div></div>
-<div class="section">
-  <h2>项目经历</h2>
-<div class="proj-item"><span class="proj-name">自研前端组件库</span><span class="proj-role">核心开发</span><span class="proj-desc">Star 1.2k+，被 10 + 公司内部项目采用</span></div><div class="proj-item"><span class="proj-name">基于 React 开发了一套通用业务组件库，包含 40 + 高复用组件，支持主题定制与按需引入</span><span class="proj-role"></span><span class="proj-desc"></span></div><div class="proj-item"><span class="proj-name">完善了组件库的单元测试与文档体系，测试覆盖率达 95%，降低了业务方的使用成本与沟通成本</span><span class="proj-role"></span><span class="proj-desc"></span></div><div class="proj-item"><span class="proj-name">用户侧智能问答 Web 应用</span><span class="proj-role">前端负责人</span><span class="proj-desc">基于 RAG 架构，实现高可用交互界面</span></div><div class="proj-item"><span class="proj-name">负责智能问答系统的前端架构设计与实现，对接后端大模型接口，优化了流式响应的渲染逻辑</span><span class="proj-role"></span><span class="proj-desc"></span></div><div class="proj-item"><span class="proj-name">针对大模型对话场景做了性能与体验优化，实现了打字机效果、上下文缓存、错误重试等功能，用户交互满意度提升 30%</span><span class="proj-role"></span><span class="proj-desc"></span></div></div>
-<div class="section">
-  <h2>教育背景</h2>
-<div class="edu-item">2025-至今湘潭大学 |  |  | </div></div>
-<div class="section">
-  <h2>联系方式</h2>
-  <div class="links"><a href="mailto:1172289105@qq.com">1172289105@qq.com</a></div>
-</div>
-<div class="geo-hint">
-  此页面已进行GEO（Generative Engine Optimization）优化，包含JSON-LD结构化数据和语义化HTML标记，
-  可被豆包、通义千问、智谱GLM等AI搜索引擎自动解析和索引。
-  行业领域：互联网/科技
-  目标AI平台：豆包、通义千问、智谱GLM、ChatGPT、Kimi、DeepSeek、Perplexity、百度AI搜索
-</div>
+<body class="font-sans text-stone-900 min-h-screen relative">
+<!-- 粒子背景 -->
+<canvas id="bg-canvas" class="fixed inset-0 z-0 pointer-events-none"></canvas>
+
+<!-- Toast -->
+<div id="toast" class="toast info"></div>
+
+<!-- 主容器 -->
+<div class="relative z-10 max-w-2xl mx-auto px-6 py-12">
+
+  <!-- 头部 -->
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-xs font-semibold text-emerald-900 tracking-wider uppercase mb-5">
+      <span class="iconify" data-icon="lucide:sparkles" data-width="14"></span>
+      GEO 优化工具
+    </div>
+    <h1 class="font-serif text-4xl md:text-5xl font-medium tracking-tight text-stone-900 mb-3">
+      个人页面生成器
+    </h1>
+    <p class="text-stone-500 text-base leading-relaxed max-w-md mx-auto">
+      填写个人信息，自动生成 AI 搜索引擎友好的个人页面，让豆包、通义千问、DeepSeek 等平台更容易找到你
+    </p>
+  </div>
+
+  <!-- 步骤指示器 -->
+  <div class="flex items-center justify-center gap-0 mb-10 px-4 max-w-md mx-auto">
+    <div id="dot-1" class="step-dot">1</div>
+    <div id="line-1" class="step-line"></div>
+    <div id="dot-2" class="step-dot">2</div>
+    <div id="line-2" class="step-line"></div>
+    <div id="dot-3" class="step-dot">3</div>
+    <div id="line-3" class="step-line"></div>
+    <div id="dot-4" class="step-dot">4</div>
+  </div>
+  <div class="flex justify-between text-xs text-stone-400 font-medium max-w-md mx-auto px-2 mb-8">
+    <span>基本信息</span>
+    <span>技能关键词</span>
+    <span>经历优化</span>
+    <span>生成结果</span>
+  </div>
+  <!-- ====== 步骤1：基本信息 ====== -->
+ <div id="step-1" class="step-panel">
+    <div class="bg-white rounded-xl border border-stone-200 p-6 md:p-8 shadow-sm">
+      <h2 class="font-serif text-xl font-medium text-stone-900 mb-1">基本信息</h2>
+      <p class="text-sm text-stone-400 mb-6">这些信息将作为AI检索的核心标识</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="form-label" for="f-name">姓名 <span class="text-red-500">*</span></label>
+          <input id="f-name" type="text" class="form-input" placeholder="你的真实姓名">
+        </div>
+        <div>
+          <label class="form-label" for="f-title">职位头衔 <span class="text-red-500">*</span></label>
+          <input id="f-title" type="text" class="form-input" placeholder="如：高级前端工程师">
+        </div>
+        <div>
+          <label class="form-label" for="f-city">所在城市</label>
+          <input id="f-city" type="text" class="form-input" placeholder="如：北京">
+        </div>
+        <div>
+          <label class="form-label" for="f-email">邮箱</label>
+          <input id="f-email" type="email" class="form-input" placeholder="your@email.com">
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <label class="form-label" for="f-bio">个人简介 <span class="text-red-500">*</span></label>
+        <textarea id="f-bio" class="form-input" rows="4" placeholder="用2-3句话介绍自己，包括你的专业领域、核心优势和独特价值。这是AI检索时最关注的内容。"></textarea>
+        <p class="form-hint">建议包含：专业方向 + 年限 + 核心成就 + 独特标签，AI引擎会优先抓取这段文字</p>
+      </div>
+
+      <div class="mt-5">
+        <label class="form-label" for="f-extra">补充说明</label>
+        <textarea id="f-extra" class="form-input" rows="2" placeholder="其他想被AI检索到的信息，如：开源贡献者、技术博主、演讲经历等"></textarea>
+      </div>
+    </div>
+  </div>
+  <!-- ====== 步骤2：技能与关键词 ====== -->
+  <div id="step-2" class="step-panel">
+    <div class="bg-white rounded-xl border border-stone-200 p-6 md:p-8 shadow-sm">
+      <h2 class="font-serif text-xl font-medium text-stone-900 mb-1">技能与关键词</h2>
+      <p class="text-sm text-stone-400 mb-6">这些标签帮助AI搜索引擎精准匹配你的专业领域</p>
+
+      <div class="mb-6">
+        <label class="form-label">核心技能</label>
+        <div id="skill-tags" class="tag-container">
+          <input id="skill-input" type="text" placeholder="输入技能后按回车添加，如：React">
+        </div>
+        <p class="form-hint">按 Enter 添加，Backspace 删除最后一个</p>
+      </div>
+
+      <div class="mb-6">
+        <label class="form-label">AI检索关键词</label>
+        <div id="keyword-tags" class="tag-container">
+          <input id="keyword-input" type="text" placeholder="输入关键词后按回车添加，如：前端架构师">
+        </div>
+        <p class="form-hint">当用户在AI平台搜索这些词时，你更容易被发现</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="form-label" for="f-industry">行业领域</label>
+          <select id="f-industry" class="form-input">
+            <option value="">请选择行业</option>
+            <option value="互联网/科技">互联网/科技</option>
+            <option value="金融">金融</option>
+            <option value="教育">教育</option>
+            <option value="医疗健康">医疗健康</option>
+            <option value="电商">电商</option>
+            <option value="制造业">制造业</option>
+            <option value="媒体/内容">媒体/内容</option>
+            <option value="游戏">游戏</option>
+            <option value="咨询">咨询</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="f-status">求职状态</label>
+          <select id="f-status" class="form-input">
+            <option value="open">对新的机会持开放态度</option>
+            <option value="actively-looking">正在积极寻找新机会</option>
+            <option value="not-looking">目前暂不考虑换工作</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ====== 步骤3：经历与优化 ====== -->
+  <div id="step-3" class="step-panel">
+    <div class="bg-white rounded-xl border border-stone-200 p-6 md:p-8 shadow-sm">
+      <h2 class="font-serif text-xl font-medium text-stone-900 mb-1">经历与优化</h2>
+      <p class="text-sm text-stone-400 mb-6">结构化的经历信息让AI更容易理解和引用</p>
+
+      <div class="mb-5">
+        <label class="form-label" for="f-work">工作经历</label>
+        <textarea id="f-work" class="form-input" rows="4" placeholder="每行一条，格式：时间段 | 公司 | 职位 | 描述&#10;如：2020-2024 | 字节跳动 | 高级前端工程师 | 负责抖音Web端架构设计"></textarea>
+        <p class="form-hint">用 | 分隔字段，每行一条经历</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="form-label" for="f-projects">项目经历</label>
+        <textarea id="f-projects" class="form-input" rows="3" placeholder="每行一条，格式：项目名 | 角色 | 描述&#10;如：抖音Web重构 | 技术负责人 | 从0到1重构前端架构"></textarea>
+      </div>
+
+      <div class="mb-5">
+        <label class="form-label" for="f-education">教育背景</label>
+        <textarea id="f-education" class="form-input" rows="2" placeholder="每行一条，格式：时间 | 学校 | 专业 | 学历&#10;如：2016-2020 | 北京大学 | 计算机科学 | 本科"></textarea>
+      </div>
+
+      <div class="mb-5">
+        <label class="form-label">在线链接</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex items-center gap-2">
+            <span class="iconify text-stone-400" data-icon="lucide:github" data-width="18"></span>
+            <input id="f-github" type="url" class="form-input" placeholder="GitHub 链接">
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="iconify text-stone-400" data-icon="lucide:linkedin" data-width="18"></span>
+            <input id="f-linkedin" type="url" class="form-input" placeholder="LinkedIn / 脉脉链接">
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="iconify text-stone-400" data-icon="lucide:globe" data-width="18"></span>
+            <input id="f-website" type="url" class="form-input" placeholder="个人网站链接">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label">目标AI平台</label>
+        <p class="form-hint mb-3">选择你希望被哪些AI搜索引擎收录</p>
+        <div id="platform-checks" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <label class="check-item"><input type="checkbox" value="doubao"> 豆包</label>
+          <label class="check-item"><input type="checkbox" value="qwen"> 通义千问</label>
+          <label class="check-item"><input type="checkbox" value="glm"> 智谱GLM</label>
+          <label class="check-item"><input type="checkbox" value="chatgpt"> ChatGPT</label>
+          <label class="check-item"><input type="checkbox" value="kimi"> Kimi</label>
+          <label class="check-item"><input type="checkbox" value="deepseek"> DeepSeek</label>
+          <label class="check-item"><input type="checkbox" value="perplexity"> Perplexity</label>
+          <label class="check-item"><input type="checkbox" value="baidu"> 百度AI搜索</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ====== 步骤4：生成结果 ====== -->
+  <div id="step-4" class="step-panel">
+    <div class="bg-white rounded-xl border border-stone-200 p-6 md:p-8 shadow-sm">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-serif text-xl font-medium text-stone-900 mb-1">生成结果</h2>
+          <p class="text-sm text-stone-400">你的GEO优化个人页面已生成</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="downloadHTML()" class="btn-primary text-sm">
+            <span class="iconify" data-icon="lucide:download" data-width="16"></span>
+            下载HTML
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab切换 -->
+      <div class="flex mb-4">
+        <button class="result-tab active" onclick="switchTab('preview')">预览</button>
+        <button class="result-tab" onclick="switchTab('code')">HTML代码</button>
+        <button class="result-tab" onclick="switchTab('jsonld')">JSON-LD</button>
+      </div>
+
+      <!-- 预览 -->
+      <div id="result-preview"></div>
+
+      <!-- HTML代码 -->
+      <div id="result-code" style="display:none">
+        <div class="flex justify-end mb-2">
+          <button onclick="copyCode()" class="btn-secondary text-xs py-1.5 px-3">
+            <span class="iconify" data-icon="lucide:copy" data-width="14"></span>
+            复制代码
+          </button>
+        </div>
+        <pre id="result-code-text" class="code-block"></pre>
+      </div>
+
+      <!-- JSON-LD -->
+      <div id="result-jsonld" style="display:none">
+        <div class="flex justify-end mb-2">
+          <button onclick="copyJSONLD()" class="btn-secondary text-xs py-1.5 px-3">
+            <span class="iconify" data-icon="lucide:copy" data-width="14"></span>
+            复制JSON-LD
+          </button>
+        </div>
+        <pre id="result-jsonld-text" class="code-block"></pre>
+      </div>
+    </div>
+  </div>
+  <!-- 导航按钮 -->
+  <div class="flex items-center justify-between mt-8">
+    <button id="btn-prev" onclick="goPrev()" class="btn-secondary">
+      <span class="iconify" data-icon="lucide:arrow-left" data-width="16"></span>
+      上一步
+    </button>
+    <button id="btn-next" onclick="goNext()" class="btn-primary">
+      下一步 <span class="iconify" data-icon="lucide:arrow-right" data-width="16"></span>
+    </button>
+  </div>
+
+  <!-- 底部 -->
+  <div class="text-center mt-12 pb-8">
+    <p class="text-xs text-stone-400">GEO个人页面生成器 · 让AI搜索引擎更好地认识你</p>
+  </div>
+
+</div><!-- /主容器 -->
+
+<script>
+/* ========== 全局变量 ========== */
+var currentStep = 1;
+var totalSteps = 4;
+var skills = [];
+var keywords = [];
+var generatedHTML = '';
+var generatedJSONLD = '';
+
+/* ========== 步骤切换 ========== */
+function showStep(n) {
+  for (var i = 1; i <= totalSteps; i++) {
+    var panel = document.getElementById('step-' + i);
+    if (panel) { panel.style.display = 'none'; panel.classList.remove('visible'); }
+  }
+  var target = document.getElementById('step-' + n);
+  if (target) { target.style.display = 'block'; target.classList.add('visible'); }
+  currentStep = n;
+  updateStepper();
+  updateNavButtons();
+  if (n === 4) { generateAll(); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goNext() {
+  if (currentStep >= totalSteps) return;
+  if (!validateStep(currentStep)) return;
+  showStep(currentStep + 1);
+}
+
+function goPrev() {
+  if (currentStep <= 1) return;
+  showStep(currentStep - 1);
+}
+
+function updateStepper() {
+  for (var i = 1; i <= totalSteps; i++) {
+    var dot = document.getElementById('dot-' + i);
+    if (!dot) continue;
+    dot.className = 'step-dot';
+    if (i < currentStep) dot.classList.add('done');
+    else if (i === currentStep) dot.classList.add('active');
+  }
+  for (var j = 1; j < totalSteps; j++) {
+    var line = document.getElementById('line-' + j);
+    if (!line) continue;
+    line.className = 'step-line';
+    if (j < currentStep) line.classList.add('done');
+  }
+}
+
+function updateNavButtons() {
+  var prevBtn = document.getElementById('btn-prev');
+  var nextBtn = document.getElementById('btn-next');
+  if (!prevBtn || !nextBtn) return;
+  prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+  if (currentStep === totalSteps) {
+    nextBtn.style.display = 'none';
+  } else {
+    nextBtn.style.display = 'inline-flex';
+    nextBtn.innerHTML = '下一步 <span class="iconify" data-icon="lucide:arrow-right" data-width="16"></span>';
+  }
+}
+
+/* ========== 表单验证 ========== */
+function validateStep(n) {
+  if (n === 1) {
+    var name = document.getElementById('f-name').value.trim();
+    var title = document.getElementById('f-title').value.trim();
+    var bio = document.getElementById('f-bio').value.trim();
+    if (!name) { showToast('请填写姓名', 'error'); document.getElementById('f-name').focus(); return false; }
+    if (!title) { showToast('请填写职位头衔', 'error'); document.getElementById('f-title').focus(); return false; }
+    if (!bio) { showToast('请填写个人简介，这是AI检索的核心', 'error'); document.getElementById('f-bio').focus(); return false; }
+  }
+  return true;
+}
+
+/* ========== Toast提示 ========== */
+var toastTimer = null;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'info');
+  void t.offsetWidth;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+/* ========== 标签输入系统 ========== */
+function initTagSystem(containerId, inputId, arr) {
+  var container = document.getElementById(containerId);
+  var input = document.getElementById(inputId);
+  if (!container || !input) return;
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      var val = input.value.replace(/,/g, '').trim();
+      if (val && arr.indexOf(val) === -1) {
+        arr.push(val);
+        renderTags(containerId, inputId, arr);
+        input.value = '';
+      }
+    }
+    if (e.key === 'Backspace' && !input.value && arr.length > 0) {
+      arr.pop();
+      renderTags(containerId, inputId, arr);
+    }
+  });
+  container.addEventListener('click', function() { input.focus(); });
+}
+
+function renderTags(containerId, inputId, arr) {
+  var container = document.getElementById(containerId);
+  var input = document.getElementById(inputId);
+  if (!container || !input) return;
+  var oldTags = container.querySelectorAll('.tag-item');
+  for (var i = 0; i < oldTags.length; i++) { oldTags[i].remove(); }
+  for (var j = 0; j < arr.length; j++) {
+    var tag = document.createElement('span');
+    tag.className = 'tag-item';
+    tag.innerHTML = escHtml(arr[j]) + ' <span class="tag-remove" data-idx="' + j + '">&times;</span>';
+    container.insertBefore(tag, input);
+  }
+  var removeBtns = container.querySelectorAll('.tag-remove');
+  for (var k = 0; k < removeBtns.length; k++) {
+    removeBtns[k].addEventListener('click', function(e) {
+      e.stopPropagation();
+      var idx = parseInt(this.getAttribute('data-idx'));
+      arr.splice(idx, 1);
+      renderTags(containerId, inputId, arr);
+    });
+  }
+}
+
+/* ========== 复选框 ========== */
+function initCheckItems() {
+  var items = document.querySelectorAll('.check-item');
+  for (var i = 0; i < items.length; i++) {
+    (function(item) {
+      var cb = item.querySelector('input');
+      if (!cb) return;
+      cb.addEventListener('change', function() {
+        if (cb.checked) item.classList.add('checked');
+        else item.classList.remove('checked');
+      });
+      if (cb.checked) item.classList.add('checked');
+    })(items[i]);
+  }
+}
+
+/* ========== HTML转义 ========== */
+function escHtml(s) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(s));
+  return div.innerHTML;
+}
+
+/* ========== 安全获取元素值 ========== */
+function getVal(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function getRawVal(id) {
+  var el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+/* ========== 收集数据（核心修复点） ========== */
+function collectData() {
+  var d = {};
+  d.name = getVal('f-name');
+  d.title = getVal('f-title');
+  d.city = getVal('f-city');
+  d.email = getVal('f-email');
+  d.github = getVal('f-github');
+  d.website = getVal('f-website');
+  d.linkedin = getVal('f-linkedin');
+  d.bio = getVal('f-bio');
+  d.skills = skills.slice();
+  d.work = getVal('f-work');
+  d.projects = getVal('f-projects');
+  d.education = getVal('f-education');
+  d.keywords = keywords.slice();
+  d.industry = getRawVal('f-industry');
+  d.status = getRawVal('f-status');
+  d.extra = getVal('f-extra');
+  d.platforms = [];
+  var checks = document.querySelectorAll('#platform-checks input[type=checkbox]');
+  for (var i = 0; i < checks.length; i++) {
+    if (checks[i].checked) d.platforms.push(checks[i].value);
+  }
+  return d;
+}
+
+/* ========== 生成所有内容 ========== */
+function generateAll() {
+  var d = collectData();
+  var statusMap = {
+    'actively-looking': '正在积极寻找新机会',
+    'open': '对新的机会持开放态度',
+    'not-looking': '目前暂不考虑换工作'
+  };
+  var statusText = statusMap[d.status] || '';
+  var keywordStr = d.keywords.join('、');
+  var skillStr = d.skills.join('、');
+  var platformNames = {
+    doubao:'豆包', qwen:'通义千问', glm:'智谱GLM',
+    chatgpt:'ChatGPT', kimi:'Kimi', deepseek:'DeepSeek',
+    perplexity:'Perplexity', baidu:'百度AI搜索'
+  };
+  var platformStr = d.platforms.map(function(p){ return platformNames[p]||p; }).join('、');
+
+  /* 构建工作经历HTML */
+  var workItems = '';
+  if (d.work) {
+    var wl = d.work.split('\n').filter(function(l){ return l.trim(); });
+    for (var i = 0; i < wl.length; i++) {
+      var p = wl[i].split('|').map(function(x){ return x.trim(); });
+      workItems += '<div class="exp-item"><span class="exp-time">' + escHtml(p[0]||'') +
+        '</span><span class="exp-company">' + escHtml(p[1]||'') +
+        '</span><span class="exp-role">' + escHtml(p[2]||'') +
+        '</span><span class="exp-desc">' + escHtml(p[3]||'') + '</span></div>';
+    }
+  }
+
+  /* 构建项目经历HTML */
+  var projItems = '';
+  if (d.projects) {
+    var pl = d.projects.split('\n').filter(function(l){ return l.trim(); });
+    for (var j = 0; j < pl.length; j++) {
+      var pp = pl[j].split('|').map(function(x){ return x.trim(); });
+      projItems += '<div class="proj-item"><span class="proj-name">' + escHtml(pp[0]||'') +
+        '</span><span class="proj-role">' + escHtml(pp[1]||'') +
+        '</span><span class="proj-desc">' + escHtml(pp[2]||'') + '</span></div>';
+    }
+  }
+
+  /* 构建教育背景HTML */
+  var eduItems = '';
+  if (d.education) {
+    var el = d.education.split('\n').filter(function(l){ return l.trim(); });
+    for (var k = 0; k < el.length; k++) {
+      var ep = el[k].split('|').map(function(x){ return x.trim(); });
+      eduItems += '<div class="edu-item">' + escHtml(ep[0]||'') + ' | ' +
+        escHtml(ep[1]||'') + ' | ' + escHtml(ep[2]||'') + ' | ' + escHtml(ep[3]||'') + '</div>';
+    }
+  }
+
+  /* 构建技能标签HTML */
+  var skillTags = '';
+  for (var m = 0; m < d.skills.length; m++) {
+    skillTags += '<span class="skill-tag">' + escHtml(d.skills[m]) + '</span>';
+  }
+
+  /* 构建链接 */
+  var linksHTML = '';
+  if (d.github) linksHTML += '<a href="' + escHtml(d.github) + '">GitHub</a>';
+  if (d.linkedin) linksHTML += '<a href="' + escHtml(d.linkedin) + '">LinkedIn/脉脉</a>';
+  if (d.website) linksHTML += '<a href="' + escHtml(d.website) + '">个人网站</a>';
+  if (d.email) linksHTML += '<a href="mailto:' + escHtml(d.email) + '">' + escHtml(d.email) + '</a>';
+
+  /* JSON-LD结构化数据 */
+  var jsonldObj = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": d.name,
+    "jobTitle": d.title,
+    "description": d.bio + (d.city ? ' 所在城市：' + d.city : '') + (statusText ? ' 求职状态：' + statusText : ''),
+    "url": d.website || "",
+    "sameAs": [d.github, d.linkedin].filter(function(u){ return u; }),
+    "knowsAbout": d.skills,
+    "worksFor": { "@type": "Organization", "name": "" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "" },
+    "keywords": d.keywords.join(', ')
+  };
+  generatedJSONLD = JSON.stringify(jsonldObj, null, 2);
+
+  /* 生成完整GEO优化HTML页面 */
+  generatedHTML = '<!DOCTYPE html>\n' +
+'<html lang="zh-CN">\n' +
+'<head>\n' +
+'<meta charset="UTF-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'<title>' + escHtml(d.name) + ' - ' + escHtml(d.title) + '</title>\n' +
+'<meta name="description" content="' + escHtml(d.bio) + '">\n' +
+'<meta name="keywords" content="' + escHtml(keywordStr || d.title) + '">\n' +
+'<meta name="author" content="' + escHtml(d.name) + '">\n' +
+'<!-- Open Graph -->\n' +
+'<meta property="og:title" content="' + escHtml(d.name) + ' - ' + escHtml(d.title) + '">\n' +
+'<meta property="og:description" content="' + escHtml(d.bio) + '">\n' +
+'<meta property="og:type" content="profile">\n' +
+'<meta property="profile:first_name" content="' + escHtml(d.name) + 'n' +
+(d.website ? '<meta property="og:url" content="' + escHtml(d.website) + '">\n' : '') +
+'<!-- JSON-LD 结构化数据（AI搜索引擎核心解析目标） -->\n' +
+'<script type="application/ld+json">\n' +
+generatedJSONLD + '\n' +
+'<\/script>\n' +
+'<style>\n' +
+'  *{box-sizing:border-box;margin:0;padding:0}\n' +
+'  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;\n' +
+'    background:#fafaf9;color:#1c1917;line-height:1.7;max-width:780px;margin:0 auto;padding:48px 24px}\n' +
+'  h1{font-size:28px;font-weight:800;margin-bottom:4px}\n' +
+'  .subtitle{font-size:18px;color:#78716c;margin-bottom:24px}\n' +
+'  .section{margin-bottom:28px}\n' +
+'  .section h2{font-size:16px;font-weight:700;border-bottom:2px solid #e7e5e4;padding-bottom:6px;margin-bottom:12px}\n' +
+'  .bio{font-size:15px;color:#44403c;line-height:1.8}\n' +
+'  .skill-tags{display:flex;flex-wrap:wrap;gap:8px}\n' +
+'  .skill-tag{background:#f5f5f4;border:1px solid #d6d3d1;border-radius:6px;padding:4px 12px;font-size:13px}\n' +
+'  .exp-item,.proj-item,.edu-item{margin-bottom:10px;font-size:14px}\n' +
+'  .exp-time,.exp-company,.exp-role{font-weight:600;margin-right:12px}\n' +
+'  .exp-desc,.proj-desc{color:#57534e}\n' +
+'  .proj-name{font-weight:600;margin-right:12px}\n' +
+'  .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}\n' +
+'  .links a{color:#b45309;text-decoration:none;font-weight:500}\n' +
+'  .links a:hover{text-decoration:underline}\n' +
+'  .geo-hint{margin-top:40px;padding:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12px;color:#92400e}\n' +
+'</style>\n' +
+'</head>\n' +
+'<body>\n' +
+'<h1>' + escHtml(d.name) + '</h1>\n' +
+'<div class="subtitle">' + escHtml(d.title) + (d.city ? ' · ' + escHtml(d.city) : '') + '</div>\n' +
+'<div class="section">\n' +
+'  <h2>关于我</h2>\n' +
+'  <div class="bio">' + escHtml(d.bio) + '</div>\n' +
+(d.extra ? '  <div class="bio" style="margin-top:8px">' + escHtml(d.extra) + '</div>\n' : '') +
+(statusText ? '  <div class="bio" style="margin-top:8px;color:#b45309;font-weight:600">' + escHtml(statusText) + '</div>\n' : '') +
+'</div>\n' +
+(d.skills.length > 0 ? '<div class="section">\n  <h2>核心技能</h2>\n  <div class="skill-tags">' + skillTags + '</div>\n</div>\n' : '') +
+(workItems ? '<div class="section">\n  <h2>工作经历</h2>\n' + workItems + '</div>\n' : '') +
+(projItems ? '<div class="section">\n  <h2>项目经历</h2>\n' + projItems + '</div>\n' : '') +
+(eduItems ? '<div class="section">\n  <h2>教育背景</h2>\n' + eduItems + '</div>\n' : '') +
+(linksHTML ? '<div class="section">\n  <h2>联系方式</h2>\n  <div class="links">' + linksHTML + '</div>\n</div>\n' : '') +
+'<div class="geo-hint">\n' +
+'  此页面已进行GEO（Generative Engine Optimization）优化，包含JSON-LD结构化数据和语义化HTML标记，\n' +
+'  可被豆包、通义千问、智谱GLM等AI搜索引擎自动解析和索引。\n' +
+(d.industry ? '  行业领域：' + escHtml(d.industry) + '\n' : '') +
+(keywordStr ? '  目标关键词：' + escHtml(keywordStr) + '\n' : '') +
+(platformStr ? '  目标AI平台：' + escHtml(platformStr) + '\n' : '') +
+'</div>\n' +
+'</body>\n</html>';
+
+  /* 渲染预览 */
+  var previewDiv = document.getElementById('result-preview');
+  if (previewDiv) {
+    previewDiv.innerHTML = '';
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;height:400px;border:1px solid #1e293b;border-radius:8px;background:#fff;';
+    previewDiv.appendChild(iframe);
+    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(generatedHTML);
+    iframeDoc.close();
+  }
+
+  /* 渲染代码（修复：定位到对应的代码展示 pre 元素） */
+  var codeDiv = document.getElementById('result-code-text');
+  if (codeDiv) { codeDiv.textContent = generatedHTML; }
+
+  /* 渲染JSON-LD（修复：将 jsonld 改为 jsonldDiv） */
+  var jsonldDiv = document.getElementById('result-jsonld-text');
+  if (jsonldDiv) { jsonldDiv.textContent = generatedJSONLD; }
+}
+
+/* ========== Tab切换 ========== */
+function switchTab(tabName) {
+  var tabs = ['preview', 'code', 'jsonld'];
+  for (var i = 0; i < tabs.length; i++) {
+    var t = tabs[i];
+    var content = document.getElementById('result-' + t);
+    var btn = document.querySelector('.result-tab[onclick*="' + t + '"]');
+    if (content) content.style.display = (t === tabName) ? 'block' : 'none';
+    if (btn) btn.className = 'result-tab' + (t === tabName ? ' active' : '');
+  }
+}
+
+/* ========== 下载HTML文件 ========== */
+function downloadHTML() {
+  if (!generatedHTML) { showToast('请先生成内容', 'error'); return; }
+  var d = collectData();
+  var filename = (d.name || 'resume').replace(/\s+/g, '') + '-GEO.html';
+  var blob = new Blob([generatedHTML], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('文件已下载：' + filename, 'success');
+}
+
+/* ========== 复制代码 ========== */
+function copyCode() {
+  if (!generatedHTML) { showToast('请先生成内容', 'error'); return; }
+  copyToClipboard(generatedHTML);
+  showToast('HTML代码已复制到剪贴板', 'success');
+}
+
+function copyJSONLD() {
+  if (!generatedJSONLD) { showToast('请先生成内容', 'error'); return; }
+  copyToClipboard(generatedJSONLD);
+  showToast('JSON-LD结构化数据已复制到剪贴板', 'success');
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+/* ========== 粒子背景 ========== */
+function initBgCanvas() {
+  var canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var particleCount = 50;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (var i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 0.5,
+      alpha: Math.random() * 0.5 + 0.2
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(0.5, p.r), 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16,185,129,' + p.alpha + ')';
+      ctx.fill();
+
+      /* 连线 */
+      for (var j = i + 1; j < particles.length; j++) {
+        var q = particles[j];
+        var dx = p.x - q.x;
+        var dy = p.y - q.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = 'rgba(16,185,129,' + (0.15 * (1 - dist / 120)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  /* 检测是否偏好减少动画 */
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    draw();
+  }
+}
+
+/* ========== 初始化 ========== */
+window.addEventListener('DOMContentLoaded', function() {
+  /* 初始化标签输入 */
+  initTagSystem('skill-tags', 'skill-input', skills);
+  initTagSystem('keyword-tags', 'keyword-input', keywords);
+
+  /* 初始化复选框 */
+  initCheckItems();
+
+  /* 初始化粒子背景 */
+  initBgCanvas();
+
+  /* 初始化步骤显示 */
+  showStep(1);
+});
+</script>
 </body>
 </html>
